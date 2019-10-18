@@ -172,7 +172,7 @@ createChart = (file) =>{
             tooltip.style('height', '50px')
             tooltip.attr("data-country", d[0])
             tooltip.style('opacity', 1)
-            tooltip.html("In " + d[0] + " Nasa was " + d[1])
+            tooltip.html(d[0] + " - " + d[1])
                 // This will give the coordinates where mouseevent is and put tooltip there
                 .style("left", ((screen.width*0.2)+i*xScale.bandwidth())+"px")
                 .style("top", height - (2 * margin.bottom) + "px")
