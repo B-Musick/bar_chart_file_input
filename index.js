@@ -1,6 +1,7 @@
 // Select the first file in the nodes file list, returns File Object
 const inputElement = document.getElementById("fileItem");
 inputElement.addEventListener("change", (e) => {
+
     var file = document.getElementById('fileItem').files[0];
     // const fileList = this.files; /* now you can work with the file list */
     
@@ -13,82 +14,16 @@ inputElement.addEventListener("change", (e) => {
         createChart(split);
         
     }
-    // d3.csv(file)
-    //     .then(data => { console.log(data) });
-    // createGameBoard(file);
-    // gameboard.toString();
-    // gameboard.setScreenBoard();
 })
 
-// createGameBoard = (file) => {
-//     // Take in the file when it is input and create a board
-//     let boardContent = {
-//         '#': new Wall(),
-//         '.': new OpenTile(),
-//         'T': new GreaterTroll(),
-//         't': new Troll(),
-//         '@': new Player(),
-//         'Y': new Amulet(),
-//         'h': new Potion(),
-//         '^': new Trap()
-
-//     }
-//     var reader = new FileReader();
-
-//     reader.readAsBinaryString(file);
-//     let board = []; // Set constructor variable to empty array
-//     reader.onloadend = function () {
-//         // reader.result returns string with board
-
-//         // Save the resulting string
-//         let boardString = reader.result;
-//         // Split result into array
-//         let boardArray = boardString.split('');
-
-//         let rowArray = [];
-
-//         for (let i = 0; i < boardArray.length; i++) {
-
-//             if (boardArray[i] === '\n' && boardArray[i + 1] !== '\n') {
-
-//                 // If newline then dont add this to the array
-//                 // Also if multiple newlines in a row then dont add them
-//                 let array = [...rowArray]
-//                 // Only after first line push the array
-
-//                 board.push(array);
-
-//                 rowArray = []; // Erase array
-
-//             }
-//             else if (boardArray[i] !== '\n') {
-//                 // Push the content into the array if not a newline
-//                 rowArray.push(boardContent[boardArray[i]]);
-
-
-//             }
-//         };
-
-//         let gameboard = new Gameboard(board);
-//         gameboard.toString();
-//         gameboard.setScreenBoard();
-
-//     }
-//     console.log(reader)
-// }
-
-
-
-
-
-
-// Returns promise
-// d3.csv('data.csv')
-//     .then(data=>{console.log(data)});
 
 createChart = (file) =>{
+    console.log(file)
     // File is loaded in when called from inputElement event listener
     const svg = d3.select('svg');
+
+    // Remove all the data so when new file loaded it doesnt overlap
+    svg.selectAll("*").remove();
     const title = document.getElementById('title');
 
     // Remove the first value from the array which is the title
@@ -154,7 +89,7 @@ createChart = (file) =>{
         .attr("dy", ".75em")
         .attr("transform", "rotate(-90)")
         .style('font-size', screen.width * 0.01 + "")
-        .text("GDP ( billions $ )");
+        .text(`${axesTitles[1]}`);
 
     svg.append("text")
         .attr("class", "x label")
@@ -162,7 +97,7 @@ createChart = (file) =>{
         .attr("x", width / 2)
         .attr("y", height - 12)
         .style('font-size', screen.width * 0.01 + "")
-        .text("Date (year)");
+        .text(`${axesTitles[0]}`);
 
     /*********** AXES COORDINATES  ************/
 
@@ -248,6 +183,11 @@ createChart = (file) =>{
     svg.style('background-color', '#eaebe4');
 }
 
+// jQuery which initiates the graph when the page loads
+$.get('data.csv', function (data) {
+    let split = data.split('\n');
+    createChart(split);
+});
 
 
 

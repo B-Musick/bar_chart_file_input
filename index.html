@@ -11,6 +11,7 @@
     <!-- Fix error getting https://stackoverflow.com/questions/31075893/im-getting-favicon-ico-error -->
     <link rel="shortcut icon" href="">
     <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -26,14 +27,18 @@
         <div>
             <h3>How to use</h3>
     
-            <p>1. Create a CSV file with the data you have. CSV file should
-                have the title of the graph as the first line, the x and y axis as the next
-                row (separated by commas). Then have each new data group in a separated
-                row with the values 'x,y' separated by commas.
+            <p>- Create a CSV file with the data you have. CSV file should be formatted in the following way
+                <ol>
+                   <li>Title of the graph</li>
+                   <li>x-axis label, y-axis label</li>
+                   <li>Then the rest of the rows should be the <u>x-value, y-value</u></li>
+                </ol>
             </p>
-            <img src="https://i.imgur.com/6RBI88Y.png" style="margin-left: 25%;">
-            <p>2. Then use the file selector below, input the file you made and let the program do the work.</p>
-    
+            <img src="https://i.imgur.com/GFzqUb9.png" style="margin-left: 25%;">
+            <p>- Then use the file selector below, input the file you made and let the program do the work.</p>
+            <p>- When the graph is displayed on the screen, hover over the bars and it will display the 
+                value of that bar.
+            </p>
         </div>
         <div id="fileInput">
             <input id='fileItem' type="file" accept=".csv">
