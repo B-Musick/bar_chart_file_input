@@ -17,15 +17,28 @@
 
 
     <!-------------- TITLE ------------------>
-    <p id="title" style="text-align: center;top:10">United States GDP From 1947-2015</p>
+    <p id="title" style="text-align: center;top:10"></p>
 
     <!-------------- GRAPH ------------------>
     <svg width="70%" height="80%" style="margin-left: 15%; height: 80vh;"></svg>
 
+    <div id="description-container">
         <div>
+            <h3>How to use</h3>
+    
+            <p>1. Create a CSV file with the data you have. CSV file should
+                have the title of the graph as the first line, the x and y axis as the next
+                row (separated by commas). Then have each new data group in a separated
+                row with the values 'x,y' separated by commas.
+            </p>
+            <img src="https://i.imgur.com/6RBI88Y.png" style="margin-left: 25%;">
+            <p>2. Then use the file selector below, input the file you made and let the program do the work.</p>
+    
+        </div>
+        <div id="fileInput">
             <input id='fileItem' type="file" accept=".csv">
         </div>
-
+    </div>
     <!-------------- SCRIPT ------------------>
     <script src="index.js"></script>
 </body>

@@ -118,16 +118,18 @@ createChart = (file) =>{
         return [arr[0],parseInt(arr[1])];
     });
     
-    // Set the xScale using date values, map the domain to the range to fit the page
-    let yScale = d3.scaleLinear()
-        // Take the domain 'dates' and map them to the x-axis (method chaining)
-        .domain([0, d3.max(parsedDataset, d => d[1])]) // (first(earliest) date, last(latest) date)
-        .range([margin.left, (innerHeight)]); // Left screen, right screen
-
+    /***************************** SCALES  *************************************/
     // Map the coutries (parsedDataset[0] to the x axis starting at padding, ending width-padding)
     const xScale = d3.scaleBand()
         .domain(parsedDataset.map(data=>data[0]))
-        .range([margin.bottom,innerWidth]);
+        .range([0,innerWidth]);
+
+    // Set the xScale using date values, map the domain to the range to fit the page
+    let yScale = d3.scaleLinear()
+        // Take the domain 'dates' and map them to the x-axis (method chaining)
+        .domain([0,d3.max(parsedDataset, d => d[1])]) // (first(earliest) date, last(latest) date)
+        .range([innerHeight,0]); // Left screen, right screen
+
 
     // Use these to prevent repetative data
     // Replace whole equation d=>d[0]
@@ -142,9 +144,6 @@ createChart = (file) =>{
     // console.log(yScale('1000')) // Test scale
 
     /***************************** AXES **************************************/
-    // Axis takes scale function, determine what values in scale correspond to what pixels
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
 
     /************* AXIS LABELS *******************/
     svg.append("text")
@@ -166,68 +165,83 @@ createChart = (file) =>{
         .text("Date (year)");
 
     /*********** AXES COORDINATES  ************/
+
+    const g = svg.append('g')
+        .attr('transform',`translate(${margin.left},${margin.top})`);
+    // Axis takes scale function, determine what values in scale correspond to what pixels
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
     // X-AXIS
-    svg.append('g')
+    g.append('g')
         // Define x,y coordinates translation from the left of screen and from top of screen 
-        .attr('transform', "translate(0," + (height) + ")") // translate from svg edge to bottom of screen
+        .attr('transform', `translate(0,${innerHeight})`) // translate from svg edge to bottom of screen
         .call(xAxis) // Call function x-axis on elements of selection 'g'
-        .attr('id', 'x-axis');
+        .attr('id', 'x-axis')
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-35)");
+
 
     // Y-Axis
-    svg.append('g')
+    g.append('g')
         // Translate will define location of y-axis by defining (x,y) translation
         // If didnt add padding to x-coordinate, the y-axis is against the screen
-        .attr('transform', "translate(" + 10 + ", 0)") // translate from svg left edge and y coordinate from top of screen
+        // .attr('transform', "translate(" +(margin.left) + ", 0)") // translate from svg left edge and y coordinate from top of screen
         .call(yAxis) // Call function x-axis on elements of selection 'g'
         .attr('id', 'y-axis');
     // Holds value for the bar chart bars width
     
 
-    // // Tooltip body
-    // let tooltip = d3
-    //     .select("body")
-    //     .append("div")
-    //     .attr("id", "tooltip")
+    // Tooltip body
+    let tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("id", "tooltip")
 
+    
     // STEP 2
-    svg.selectAll('rect') // Get the set of elements
+    g.selectAll('rect') // Get the set of elements
         .data(parsedDataset)
         .enter() // Create thing that creates rectangle for each row of data
         .append('rect')
-        .attr('data-date', xValue+"") // Needs to match date on x-axis
+        .attr('data-country', xValue+"") // Needs to match date on x-axis
         .attr('data-gdp', yValue+"") // Needs to match gdp of y-axis
         .attr('width', xScale.bandwidth()-10 + "") // Width of bars using xScales band widths
-        .attr('height', d => yScale(yValue(d))) // Height is the height - yScale value
+        .attr('height', d => innerHeight-yScale(yValue(d))) // Height is the height - yScale value
         .attr('class', 'bar')
         // X will scale according to its scaling factor
-        .attr('x', (d, i) => xScale(xValue(d))) // Location of bars on x-axis
+        .attr('x', (d, i) => {return 5+xScale(xValue(d))}) // Location of bars on x-axis
         // Need to subtract the yScaled value from height since scaled it this way
-        .attr('y', d => (height-yScale(yValue(d)))+margin.bottom + "") // Makes sure bars arent above x-axis
-        .attr("transform", `translate(0,${-margin.bottom})`)
+        .attr('y', d => (yScale(yValue(d))) + "") // Makes sure bars arent above x-axis
+        
         .style('fill', '#4aa89c')
         .style('margin','2')
-    //     // Tooltip
-    //     .on("mouseout", function () {
-    //         // When mouse stops hovering a specific bar
-    //         d3.select(this)
-    //             .transition()
-    //             .duration(400)
-    //             .style("fill", "#4aa89c");
-    //         tooltip.style("opacity", 0);
-    //         tooltip.style("display", "block")
-    //     })
-    //     .on("mouseover", function (d, i) {
-    //         d3.select(this).style("fill", "a8eddf");
-    //         tooltip.attr("id", "tooltip")
-    //         tooltip.style("fill", "#a8eddf")
-    //         tooltip.style("display", "block")
-    //         tooltip.attr("data-date", d[0])
-    //         tooltip.style('opacity', 1)
-    //         tooltip.html("In " + d[0] + " GDP was " + d[1])
-    //             // This will give the coordinates where mouseevent is and put tooltip there
-    //             .style("left", (i * barWidth) + padding + "px")
-    //             .style("top", height - (2 * padding) + "px")
-    //     })
+        // Tooltip
+        .on("mouseout", function () {
+            // When mouse stops hovering a specific bar
+            d3.select(this)
+                .transition()
+                .duration(400)
+                .style("fill", "#4aa89c");
+            tooltip.style("opacity", 0);
+            tooltip.style("display", "block")
+        })
+        .on("mouseover", function (d, i) {
+            d3.select(this).style("fill", "a8eddf");
+            tooltip.attr("id", "tooltip")
+            tooltip.style("fill", "#a8eddf")
+            tooltip.style("display", "block")
+            tooltip.style('height', '50px')
+            tooltip.attr("data-country", d[0])
+            tooltip.style('opacity', 1)
+            tooltip.html("In " + d[0] + " Nasa was " + d[1])
+                // This will give the coordinates where mouseevent is and put tooltip there
+                .style("left", ((screen.width*0.2)+i*xScale.bandwidth())+"px")
+                .style("top", height - (2 * margin.bottom) + "px")
+        })
 
 
 

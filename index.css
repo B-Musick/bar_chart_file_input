@@ -24,3 +24,17 @@ svg{
   border: 3px solid black;
   background-color: cornsilk;
 }
+#description-container{
+    font-size: 25px;
+    padding: 30px;
+}
+#fileInput{
+background-color: cornsilk;
+width: 200px;
+margin: 0 auto;
+border: 3px solid black;
+}
+#fileItem{
+    font-family: 'Special Elite', cursive;
+    
+}
